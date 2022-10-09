@@ -1,0 +1,8 @@
+﻿  6502.c
+E:\Emulation\Atari2600\6502.c(15,2): warning C4013: memset: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(179,8): warning C4244: функция: преобразование "WORD" в "BYTE", возможна потеря данных
+E:\Emulation\Atari2600\6502.c(183,8): warning C4244: функция: преобразование "WORD" в "BYTE", возможна потеря данных
+E:\Emulation\Atari2600\6502.c(341,27): warning C4333: >>: слишком большое смещение вправо; потеря данных
+E:\Emulation\Atari2600\6502.c(434,43): warning C4333: >>: слишком большое смещение вправо; потеря данных
+E:\Emulation\Atari2600\6502.c(439,34): warning C4333: >>: слишком большое смещение вправо; потеря данных
+  Atari2600.vcxproj -> E:\Emulation\Atari2600\Debug\Atari2600.exe
