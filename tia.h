@@ -8,6 +8,7 @@ static unsigned int SCR_WIDTH = 228;
 static unsigned int SCR_HEIGHT = 262;
 static unsigned int scanline = 0;
 static unsigned int step = 0;
+static BYTE rawBgColor = 0;
 //SDL
 static SDL_Window* win = NULL;
 static SDL_Renderer* ren = NULL;

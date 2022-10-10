@@ -140,6 +140,7 @@
     <ClInclude Include="6502.h" />
     <ClInclude Include="bitUtils.h" />
     <ClInclude Include="memory.h" />
+    <ClInclude Include="palette.h" />
     <ClInclude Include="tia.h" />
     <ClInclude Include="types.h" />
   </ItemGroup>
@@ -148,6 +149,7 @@
     <ClCompile Include="bitUtils.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="memory.c" />
+    <ClCompile Include="palette.c" />
     <ClCompile Include="tia.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

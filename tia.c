@@ -1,5 +1,5 @@
 #include "tia.h"
-
+#include "palette.h"
 void initGraph() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -26,15 +26,21 @@ void tiaReset()
 void tiaStep()
 {
     step += 1;
+    if (rawBgColor != readByte(9)) {
+        rawBgColor = readByte(9);
+        RGB_color rgb = getRgb(getCode(rawBgColor));
+        printf("%d, %d, %d \n", rgb.r, rgb.g, rgb.b);
+        SDL_SetRenderDrawColor(ren, rgb.r, rgb.g, rgb.b, 255);
+    }
     if (step >= SCR_WIDTH) {
         step = 0;
         scanline += 1;
     }
     if (scanline >= SCR_HEIGHT) {
         scanline = step = 0;
-        printf("%#02x\n", readByte(9));
+        SDL_RenderPresent(ren);
     }
-        
+    SDL_RenderDrawPoint(ren, step, scanline);
 
    // printf("%#02x\n", readByte(9));
  
@@ -67,11 +73,11 @@ void tiaStep()
         SDL_RenderClear(ren);
         SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
     }
-    
+    */
     SDL_Event event;
     if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
         return;
-    */
+    
 }
 
 void close()

@@ -3,20 +3,12 @@
 #include <stdio.h>
 #include "bitUtils.h"
 
-
-void addBrCycles(WORD addr)
-{
-	if (isPageCrossed(addr, registers.PC)) { ticks += 4; }
-	else { ticks += 3; }
-}
-
 void cpuReset(void)
 {
 	memset(&registers, 0, sizeof(Registers));
 	registers.PC = readWord(0xFFFC);
 	registers.S = 0x00ff;
 	printf("Entry point: %#02x\n", registers.PC);
-	start = clock();
 }
 
 void stackPushByte(BYTE data)
@@ -53,281 +45,204 @@ void cpuStep(void)
 	switch (opCode) {
 		//ADC
 		case 0x69:
-			ticks += 2;
 			ADC(readByte(getImmAddr()));
 			break;
 		case 0x65:
-			ticks += 3;
 			ADC(readByte(getZpAddr()));
 			break;
 		case 0x75:
-			ticks += 4;
 			ADC(readByte(getZpXAddr()));
 			break;
 		case 0x6D:
-			ticks += 4;
 			ADC(readByte(getAbsAddr()));
 			break;
 		case 0x7D:
-			opndaddr = getAbsXAddr();
-			if (isPageCrossed(opndaddr, registers.PC)) { ticks += 5; }
-			else { ticks += 4; }
-			ADC(readByte(opndaddr));
+			ADC(readByte(getAbsXAddr()));
 			break;
 		case 0x79:
-			opndaddr = getAbsYAddr();
-			if (isPageCrossed(opndaddr, registers.PC)) { ticks += 5; }
-			else { ticks += 4; }
-			ADC(readByte(opndaddr));
+			ADC(readByte(getAbsYAddr()));
 			break;
 		case 0x61:
-			ticks += 6;
 			ADC(readByte(getIndXAddr()));
 			break;
 		case 0x71:
-			opndaddr = getIndYAddr();
-			if (isPageCrossed(opndaddr, registers.PC)) { ticks += 6; }
-			else { ticks += 5; }
-			ADC(readByte(opndaddr));
+			ADC(readByte(getIndYAddr()));
 			break;
 
 		//AND
 		case 0x29:
-			ticks += 2;
 			AND(readByte(getImmAddr()));
 			break;
 		case 0x25:
-			ticks += 3;
 			AND(readByte(getZpAddr()));
 			break;
 		case 0x35:
-			ticks += 4;
 			AND(readByte(getZpXAddr()));
 			break;
 		case 0x2D:
-			ticks += 4;
 			AND(readByte(getAbsAddr()));
 			break;
 		case 0x3D:
-			opndaddr = getAbsXAddr();
-			AND(readByte(opndaddr));
-			if (isPageCrossed(opndaddr, registers.PC)) { ticks += 5; }
-			else { ticks += 4; }
+			AND(readByte(getAbsXAddr()));
 			break;
 		case 0x39:
-			opndaddr = getAbsYAddr();
-			AND(readByte(opndaddr));
-			if (isPageCrossed(opndaddr, registers.PC)) { ticks += 5; }
-			else { ticks += 4; }
+			AND(readByte(getAbsYAddr()));
 			break;
 		case 0x21:
-			ticks += 6;
 			AND(readByte(getIndXAddr()));
 			break;
 		case 0x31:
-			opndaddr = getAbsXAddr();
 			AND(readByte(getIndYAddr()));
-			if (isPageCrossed(opndaddr, registers.PC)) { ticks += 6; }
-			else { ticks += 5; }
 			break;
-
 		//ASL
 		case 0x0A:
-			ticks += 2;
 			ASLACC();
+			registers.PC += 1;
 			break;
 		case 0x06:
-			ticks += 5;
 			ASL(getZpAddr());
 			break;
 		case 0x16:
-			ticks += 6;
 			ASL(getZpXAddr());
 			break;
 		case 0x0E:
-			ticks += 6;
 			ASL(getAbsAddr());
 			break;
 		case 0x1E:
-			ticks += 7;
 			ASL(getAbsXAddr());
 			break;
-
 		//BCC
 		case 0x90:
-			opndaddr = getRelAddr();
-			BCC(opndaddr);
-			addBrCycles(opndaddr);
+			BCC(getRelAddr());
 			break;
 
 		//BCS
 		case 0xB0:
-			opndaddr = getRelAddr();
-			BCS(opndaddr);
-			addBrCycles(opndaddr);
+			BCS(getRelAddr());
 			break;
 
 		//BEQ
 		case 0xF0:
-			opndaddr = getRelAddr();
-			BEQ(opndaddr);
-			addBrCycles(opndaddr);
+			BEQ(getRelAddr());
 			break;
 
 		//BIT
 		case 0x24:
 			BIT(getZpAddr());
-			ticks += 3;
 			break;
 		case 0x2C:
 			BIT(getAbsAddr());
-			ticks += 4;
 			break;
 		//BMI
 		case 0x30:
-			opndaddr = getRelAddr();
-			BMI(opndaddr);
-			addBrCycles(opndaddr);
+			BMI(getRelAddr());
 			break;
-
 		//BNE
 		case 0xD0:
-			opndaddr = getRelAddr();
-			BNE(opndaddr);
-			addBrCycles(opndaddr);
+			BNE(getRelAddr());
 			break;
-
 		//BPL
 		case 0x10:
-			opndaddr = getRelAddr();
-			BPL(opndaddr);
-			addBrCycles(opndaddr);
+			BPL(getRelAddr());
 			break;
-
 		//LDA
 		case 0xa9:
 			LDA(readByte(getImmAddr()));
-			ticks += 2;
 			break;
 		case 0xa5:
 			LDA(readByte(getZpAddr()));
-			ticks += 3;
 			break;
 		case 0xb5:
-			LDA(readByte(getZpXAddr()));
-			ticks += 4;
+			LDA(readByte(getZpXAddr()));	 
 			break;
 		case 0xad:
-			LDA(readByte(getAbsAddr()));
-			ticks += 4;
+			LDA(readByte(getAbsAddr())); 
 			break;
 		case 0xBD:
-			opndaddr = getAbsXAddr();
-			LDA(readByte(opndaddr));
-			if (isPageCrossed(opndaddr, registers.PC)) { ticks += 5; }
-			else { ticks += 4; }
+			LDA(readByte(getAbsXAddr()));
 			break;
 		case 0xB9:
-			opndaddr = getAbsYAddr();
-			LDA(readByte(opndaddr));
-			if (isPageCrossed(opndaddr, registers.PC)) { ticks += 5; }
-			else { ticks += 4; }
+			LDA(readByte(getAbsYAddr()));
 			break;
 		case 0xA1:
-			opndaddr = getIndXAddr();
-			LDA(readByte(opndaddr));
-			ticks += 6;
+			LDA(readByte(getIndXAddr()));
 			break;
 		case 0xB1:
-			opndaddr = getIndYAddr();
-			LDA(readByte(opndaddr));
-			if (isPageCrossed(opndaddr, registers.PC)) { ticks += 6; }
-			else { ticks += 5; }
+			LDA(readByte(getIndYAddr()));
 			break;
 
 		//STA
 		case 0x85:
-			STA(getZpAddr());
-			ticks += 2;
+			STA(getZpAddr()); 
 			break;
 		case 0x95:
 			STA(getZpXAddr());
-			ticks += 4;
 			break;
 		case 0x8D:
-			STA(getAbsAddr());
-			ticks += 4;
+			STA(getAbsAddr()); 
 			break;
 		case 0x9D:
 			STA(getAbsXAddr());
-			ticks += 5;
 			break;
 		case 0x99:
 			STA(getAbsYAddr());
-			ticks += 5;
 			break;
 		case 0x81:
 			STA(getIndXAddr());
-			ticks += 6;
 			break;
 		case 0x91:
 			STA(getIndYAddr());
-			ticks += 6;
+			 
 			break;
 
 		//LDX
 		case 0xa2:
 			LDX(readByte(getImmAddr()));
-			ticks += 2;
+			 
 			break;
 		case 0xa6:
 			LDX(readByte(getZpAddr()));
-			ticks += 3;
+			 
 			break;
 		case 0xb6:
 			LDX(readByte(getZpYAddr()));
-			ticks += 4;
+			 
 			break;
 		case 0xae:
 			LDX(readByte(getAbsAddr()));
-			ticks += 4;
 			break;
 		case 0xbe:
-			opndaddr = getAbsYAddr();
-			LDX(readByte(opndaddr));
-			if (isPageCrossed(opndaddr, registers.PC)) { ticks += 5; }
-			else { ticks += 4; }
+			LDX(readByte(getAbsYAddr()));
 			break;
 
 		//INX
 		case 0xe8:
 			INX();
-			ticks += 2;
 			registers.PC += 1;
 			break;
 
 		//STX
 		case 0x86:
 			STX(getZpAddr());
-			ticks += 2;
+			 
 			break;
 		case 0x96:
 			STX(getZpYAddr());
-			ticks += 4;
+			 
 			break;
 		case 0x8e:
 			STX(getAbsAddr());
-			ticks += 4;
+			 
 			break;
 
 		//JMP
 		case 0x4c:
 			JMP(getAbsAddr());
-			ticks += 3;
+			 
 			break;
 		case 0x6c:
 			JMP(getAbsAddr());
-			ticks += 5;
+			 
 			break;
 
 		default:

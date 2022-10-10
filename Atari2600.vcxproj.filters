@@ -30,6 +30,9 @@
     <ClInclude Include="tia.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="palette.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="6502.c">
@@ -45,6 +48,9 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="tia.c">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="palette.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

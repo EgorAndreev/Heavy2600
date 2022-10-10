@@ -3,7 +3,6 @@
 #include <time.h>
 #ifndef __6502__
 #define __6502__
-static  time_t start;
 //6502 processor
 // -----------------------------------------------------------------
 //6502 registers
@@ -39,9 +38,6 @@ typedef struct {
 
 } Registers;
 static Registers registers = {0,0,0,0,0,0};
-//Счётчик циклов
-static unsigned int ticks = 0;
-static void addBrCycles(WORD addr);
 //----------------------
 //Стек
 static void stackPushByte(BYTE data);
