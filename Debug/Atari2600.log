@@ -1,3 +1,2 @@
-﻿  palette.c
-E:\Emulation\Atari2600\palette.c(9): warning C4715: getRgb: значение возвращается не при всех путях выполнения
-  Atari2600.vcxproj -> E:\Emulation\Atari2600\Debug\Atari2600.exe
+﻿  tia.c
+  Atari2600.vcxproj -> C:\Users\Егор\Desktop\Heavy2600\Debug\Atari2600.exe

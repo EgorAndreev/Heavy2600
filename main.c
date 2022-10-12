@@ -11,7 +11,9 @@ int main(int argc, char* argv[]) {
 	cpuReset();
 	initGraph();
 	while (true) {
-		cpuStep();
+		if (!getCpuState()) {
+			cpuStep();
+		}
 		tiaStep();
 	}
 	getchar();

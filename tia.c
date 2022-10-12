@@ -1,5 +1,10 @@
 #include "tia.h"
 #include "palette.h"
+
+bool getCpuState() {
+    return isCpuStopped;
+}
+
 void initGraph() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -25,21 +30,40 @@ void tiaReset()
 
 void tiaStep()
 {
-    step += 1;
-    if (rawBgColor != readByte(9)) {
-        rawBgColor = readByte(9);
-        RGB_color rgb = getRgb(getCode(rawBgColor));
-        printf("%d, %d, %d \n", rgb.r, rgb.g, rgb.b);
+    //COLUBK changed
+    if (rawBgColor != readByte(0x9)) {
+        rawBgColor = readByte(0x9);
+        int t = rawBgColor / 10;
+        int o = rawBgColor % 10;
+        RGB_color rgb = NTSCPalette[t][o/2];
         SDL_SetRenderDrawColor(ren, rgb.r, rgb.g, rgb.b, 255);
     }
+    //WSYNC
+    if (readByte(0x2) != 0) {
+        isCpuStopped = true;
+    }
+    //New scanline
     if (step >= SCR_WIDTH) {
         step = 0;
         scanline += 1;
+        isCpuStopped = false;
+        writeByte(0x2, 0x0);
     }
+    //New frame
     if (scanline >= SCR_HEIGHT) {
         scanline = step = 0;
+        isCpuStopped = false;
+        writeByte(0x2, 0x0);
+        SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
         SDL_RenderPresent(ren);
+        SDL_RenderClear(ren);
+        SDL_Delay(16);
     }
+    step += 1;
+    SDL_RenderDrawPoint(ren, step, scanline);
+    step += 1;
+    SDL_RenderDrawPoint(ren, step, scanline);
+    step += 1;
     SDL_RenderDrawPoint(ren, step, scanline);
 
    // printf("%#02x\n", readByte(9));
