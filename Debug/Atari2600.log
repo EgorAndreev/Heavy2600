@@ -1,2 +1,10 @@
-﻿  tia.c
-  Atari2600.vcxproj -> C:\Users\Егор\Desktop\Heavy2600\Debug\Atari2600.exe
+﻿  6502.c
+E:\Emulation\Atari2600\6502.c(10,2): warning C4013: memset: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(135,8): warning C4244: функция: преобразование "WORD" в "BYTE", возможна потеря данных
+E:\Emulation\Atari2600\6502.c(138,8): warning C4244: функция: преобразование "WORD" в "BYTE", возможна потеря данных
+E:\Emulation\Atari2600\6502.c(48,7): warning C4101: opndaddr: неиспользованная локальная переменная
+E:\Emulation\Atari2600\6502.c(507,43): warning C4333: >>: слишком большое смещение вправо; потеря данных
+E:\Emulation\Atari2600\6502.c(512,34): warning C4333: >>: слишком большое смещение вправо; потеря данных
+  main.c
+  Создание кода...
+  Atari2600.vcxproj -> E:\Emulation\Atari2600\Debug\Atari2600.exe

@@ -7,14 +7,15 @@
 #include "windows.h"
 
 int main(int argc, char* argv[]) {
-	initMemory("kernel_01.bin");
+	initMemory("kernel_11.bin");
 	cpuReset();
 	initGraph();
 	while (true) {
-		if (!getCpuState()) {
+		
+		if (!wsynced) {
 			cpuStep();
 		}
-		tiaStep();
+		tiaStep(getWsyncState());
 	}
 	getchar();
 }
