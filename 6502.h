@@ -20,14 +20,17 @@
 	//1 (P5)— не используется, равен 1;
 	//V(P6) — переполнение;
 	//N(P7) — знак.Равен старшему биту значения, загруженного в A, X или Y в результате выполнения операции(кроме TXS).
-typedef struct {
-	bool C : 1;
-	bool Z : 1;
-	bool I : 1;
-	bool D : 1;
-	bool B : 1;
-	bool V : 1;
-	bool N : 1;
+typedef union {
+	struct {
+		bool C : 1;
+		bool Z : 1;
+		bool I : 1;
+		bool D : 1;
+		bool B : 1;
+		bool NONE : 1;
+		bool V : 1;
+		bool N : 1;
+	};
 } StateReg;
 typedef struct {
 	BYTE A;		
@@ -136,13 +139,36 @@ static void LSRACC();
 static void LSR(WORD addr);
 //логическое ИЛИ содержимого аккумулятора и операнда
 static void ORA(BYTE data);
-//Запись аккумулятора в память
-static void STA(WORD addr);
 //аккумулятор в стек
 static void PHA();
 //статусный регистр в стек
 static void PHP();
+//Аккумулятор из стека
+static void PLA();
+//Статусный регистр из стека
+static void PLP();
+//Циклический сдвиг операнда влево
+static void ROLACC();
+static void ROL(WORD addr);
+//Циклический сдвиг операнда вправо
+static void RORACC();
+static void ROR(WORD addr);
+//Возврат из прерывания
+static void RTI();
+//Возврат из процедуры
+static void RTS();
+//Вычитание с переносом
+static void SBC(BYTE data);
+//Установка флага C
+static void SEC();
+//Установка флага D
+static void SED();
+//Устновка флага I
+static void SEI();
+//Запись аккумулятора в память
+static void STA(WORD addr);
 //Запись X в память
 static void STX(WORD addr);
-
+//Запись Y в память
+static void STY(WORD addr);
 #endif 

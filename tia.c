@@ -7,7 +7,7 @@ void initGraph() {
         printf("%s - error init SDL2!!!", SDL_GetError());
         return;
     }
-    win = SDL_CreateWindow("Hello World!", 500, 500, SCR_WIDTH*3, SCR_HEIGHT*3, SDL_WINDOW_SHOWN);
+    win = SDL_CreateWindow("Hello World!", 500, 500, SCR_WIDTH*5, SCR_HEIGHT*3, SDL_WINDOW_SHOWN);
     if (win == NULL) {
         printf("%s - error creat SDL2 window!!!", SDL_GetError());
         return;
@@ -18,7 +18,7 @@ void initGraph() {
         return;
     }
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-    SDL_RenderSetScale(ren, 3.f, 3.f);
+    SDL_RenderSetScale(ren, 5.f, 3.f);
 }
 void tiaReset()
 {
@@ -29,10 +29,10 @@ void tiaStep(bool* wsynced)
 {
     //WSYNC
     if (*wsynced) {
+        *wsynced = false;
+        SDL_RenderDrawLine(ren, step, scanline, SCR_WIDTH, scanline);
         scanline += 1;
         step = 0;
-        *wsynced = false;
-        SDL_RenderDrawLine(ren, 67, scanline - 1, SCR_WIDTH, scanline - 1);
         return;
     }
     //COLUBK changed
@@ -48,7 +48,6 @@ void tiaStep(bool* wsynced)
     if (step >= SCR_WIDTH) {
         step = 0;
         scanline += 1;
-        (*wsynced) = false;
         return;
     }
     //New frame
@@ -66,7 +65,7 @@ void tiaStep(bool* wsynced)
         SDL_RenderDrawPoint(ren, step - 1, scanline);
         SDL_RenderDrawPoint(ren, step, scanline);
     }
-    
+    SDL_RenderPresent(ren);
     SDL_Event event;
     if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
         return;

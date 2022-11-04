@@ -10,6 +10,14 @@ void cpuReset(void)
 	memset(&registers, 0, sizeof(Registers));
 	registers.PC = readWord(0xFFFC);
 	registers.S = 0x00ff;
+	registers.P.B = true;
+	registers.P.Z = false;
+	registers.P.I = true;
+	registers.P.D = false;
+	registers.P.B = true;
+	registers.P.V = false;
+	registers.P.N = true;
+	PHP();
 	printf("Entry point: %#02x\n", registers.PC);
 }
 
@@ -369,6 +377,7 @@ void cpuStep(void)
 		//LSR
 		case 0x4A:
 			LSRACC();
+			registers.PC += 1;
 			break;
 		case 0x46:
 			LSR(getZpAddr());
@@ -411,9 +420,110 @@ void cpuStep(void)
 		case 0x11:
 			ORA(getIndYAddr());
 			break;
-		
-
-
+		//PHA
+		case 0x48:
+			PHA();
+			registers.PC += 1;
+			break;
+		//PHP
+		case 0x08:
+			PHP();
+			registers.PC += 1;
+			break;
+		//PLA
+		case 0x68:
+			PLA();
+			registers.PC += 1;
+			break;
+		//PLP
+		case 0x28:
+			PLP();
+			registers.PC += 1;
+			break;
+		//ROL
+		case 0x2a:
+			ROLACC();
+			registers.PC += 1;
+			break;
+		case 0x26:
+			ROL(getZpAddr());
+			break;
+		case 0x36:
+			ROL(getZpXAddr());
+			break;
+		case 0x2e:
+			ROL(getAbsAddr());
+			break;
+		case 0x3e:
+			ROL(getAbsXAddr());
+			break;
+		//ROR
+		case 0x6a:
+			RORACC();
+			registers.PC += 1;
+			break;
+		case 0x66:
+			ROR(getZpAddr());
+			break;
+		case 0x76:
+			ROR(getZpXAddr());
+			break;
+		case 0x6e:
+			ROR(getAbsAddr());
+			break;
+		case 0x7e:
+			ROR(getAbsXAddr());
+			break;
+		//RTI
+		case 0x40:
+			RTI();
+			registers.PC += 1;
+			break;
+		//RTS
+		case 0x60:
+			RTS();
+			registers.PC += 1;
+			break;
+		//SBC
+		case 0xe9:
+			SBC(readByte(getImmAddr()));
+			break;
+		case 0xe5:
+			SBC(readByte(getZpAddr()));
+			break;
+		case 0xf5:
+			SBC(readByte(getZpXAddr()));
+			break;
+		case 0xed:
+			SBC(readByte(getAbsAddr()));
+			break;
+		case 0xfd:
+			SBC(readByte(getAbsXAddr()));
+			break;
+		case 0xf9:
+			SBC(readByte(getAbsYAddr()));
+			break;
+		case 0xe1:
+			SBC(readByte(getIndXAddr()));
+			break;
+		case 0xf1:
+			SBC(readByte(getIndYAddr()));
+			break;
+		//SEC
+		case 0x38:
+			SEC();
+			registers.PC += 1;
+			break;
+		//SED
+		case 0xf8:
+			SED();
+			registers.PC += 1;
+			break;
+		//SEI
+		case 0x78:
+			SEI();
+			registers.PC += 1;
+			break;
 		//STA
 		case 0x85:
 			STA(getZpAddr()); 
@@ -446,7 +556,17 @@ void cpuStep(void)
 		case 0x8e:
 			STX(getAbsAddr());
 			break;
-
+		//STY
+		case 0x84:
+			STY(getZpAddr());
+			break;
+		case 0x94:
+			STY(getZpXAddr());
+			break;
+		case 0x8c:
+			STY(getAbsAddr());
+			break;
+		//TODO: TAY, TAX and OTHER TXX
 
 		default:
 			printf("Unknown instruction: %#02x\n", opCode);
@@ -725,10 +845,107 @@ void ORA(BYTE data)
 	updateNZ(registers.A);
 }
 
-void STX(WORD addr) {
+void PHA()
+{
+	stackPushByte(registers.A);
+}
+
+void PHP()
+{
+	int* i = &registers.P;
+	registers.P.NONE = 1;
+	stackPushByte(i);
+}
+
+void PLA()
+{
+	registers.A = stackPopByte();
+	updateNZ(registers.A);
+}
+
+void PLP()
+{
+	bool oldB = registers.P.B;
+	BYTE d = stackPopByte();
+	StateReg* st = &d;
+	registers.P = *st;
+	registers.P.B = (_Bool)oldB;
+}
+
+void ROLACC()
+{
+	registers.P.C = GetBit(registers.A, 7);
+	registers.A = registers.A << 1;
+	registers.A = SetBit(registers.A, 0);
+	updateNZ(registers.A);
+}
+
+void ROL(WORD addr)
+{
+	registers.P.C = GetBit(internalMemory[addr], 7);
+	internalMemory[addr] = internalMemory[addr] << 1;
+	internalMemory[addr] = SetBit(internalMemory[addr], 0);
+	updateNZ(internalMemory[addr]);
+}
+
+void RORACC()
+{
+	registers.P.C = GetBit(registers.A, 0);
+	registers.A = registers.A >> 1;
+	registers.A = SetBit(registers.A, 7);
+	updateNZ(registers.A);
+}
+
+void ROR(WORD addr)
+{
+	registers.P.C = GetBit(internalMemory[addr], 0);
+	internalMemory[addr] = internalMemory[addr] >> 1;
+	internalMemory[addr] = SetBit(internalMemory[addr], 7);
+	updateNZ(internalMemory[addr]);
+}
+
+void RTI()
+{
+	PLP();
+	registers.PC = stackPopWord();
+}
+
+void RTS()
+{
+	registers.PC = stackPopWord();
+	registers.PC += 1;
+}
+
+void SBC(BYTE data)
+{
+	ADC(~data);
+}
+
+void SEC()
+{
+	registers.P.C = true;
+}
+
+void SED()
+{
+	registers.P.D = true;
+}
+
+void SEI()
+{
+	registers.P.I = true;
+}
+
+void STX(WORD addr) 
+{
 	internalMemory[addr] = registers.X;
 }
-void JMP(WORD addr) {
+void STY(WORD addr)
+{
+	internalMemory[addr] = registers.Y;
+}
+void JMP(WORD addr) 
+{
 	registers.PC = addr & 0x1fff;
 }
 void JSR(WORD addr)

@@ -1,30 +1,17 @@
-﻿  6502.c
-C:\Users\Егор\Desktop\Heavy2600\6502.c(8,2): warning C4013: memset: нет определения; предполагается "extern" с возвратом типа "int"
-C:\Users\Егор\Desktop\Heavy2600\6502.c(131,8): warning C4244: функция: преобразование "WORD" в "BYTE", возможна потеря данных
-C:\Users\Егор\Desktop\Heavy2600\6502.c(134,8): warning C4244: функция: преобразование "WORD" в "BYTE", возможна потеря данных
-C:\Users\Егор\Desktop\Heavy2600\6502.c(44,7): warning C4101: opndaddr: неиспользованная локальная переменная
-C:\Users\Егор\Desktop\Heavy2600\6502.c(256,27): warning C4333: >>: слишком большое смещение вправо; потеря данных
-C:\Users\Егор\Desktop\Heavy2600\6502.c(349,43): warning C4333: >>: слишком большое смещение вправо; потеря данных
-C:\Users\Егор\Desktop\Heavy2600\6502.c(354,34): warning C4333: >>: слишком большое смещение вправо; потеря данных
-  bitUtils.c
-  main.c
-  memory.c
-C:\Users\Егор\Desktop\Heavy2600\memory.c(14,19): warning C4101: c: неиспользованная локальная переменная
-  palette.c
-  tia.c
-  Создание кода...
-C:\Users\Егор\Desktop\Heavy2600\palette.c(9): warning C4715: getRgb: значение возвращается не при всех путях выполнения
-C:\Users\Егор\Desktop\Heavy2600\palette.c(12): warning C4716: getCode: должна возвращать значение
+﻿  main.c
 tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_GetError в функции initGraph.
 tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_CreateWindow в функции initGraph.
 tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_DestroyWindow в функции close.
 tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_PollEvent в функции tiaStep.
 tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_CreateRenderer в функции initGraph.
+tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_RenderSetScale в функции initGraph.
 tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_SetRenderDrawColor в функции initGraph.
 tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_RenderDrawPoint в функции tiaStep.
+tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_RenderDrawLine в функции tiaStep.
 tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_RenderPresent в функции tiaStep.
 tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_DestroyRenderer в функции close.
+tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_Delay в функции tiaStep.
 tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_Init в функции initGraph.
 tia.obj : error LNK2019: ссылка на неразрешенный внешний символ SDL_Quit в функции close.
 MSVCRTD.lib(exe_main.obj) : error LNK2019: ссылка на неразрешенный внешний символ main в функции "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ).
-C:\Users\Егор\Desktop\Heavy2600\x64\Debug\Atari2600.exe : fatal error LNK1120: неразрешенных внешних элементов: 12
+E:\Emulation\Atari2600\x64\Debug\Atari2600.exe : fatal error LNK1120: неразрешенных внешних элементов: 15

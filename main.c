@@ -11,10 +11,7 @@ int main(int argc, char* argv[]) {
 	cpuReset();
 	initGraph();
 	while (true) {
-		
-		if (!wsynced) {
-			cpuStep();
-		}
+		cpuStep();
 		tiaStep(getWsyncState());
 	}
 	getchar();
