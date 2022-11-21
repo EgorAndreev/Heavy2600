@@ -1,2 +1,39 @@
-﻿  tia.c
-  Atari2600.vcxproj -> E:\Emulation\Atari2600\Debug\Atari2600.exe
+﻿  6502.c
+E:\Emulation\Atari2600\6502.h(133,154): error C2065: TXA: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.h(134,149): error C2065: TYA: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.h(134,202): error C2065: TXS: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.h(135,163): error C2065: TAY: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.h(135,215): error C2065: TAX: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.h(136,190): error C2065: TSX: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.h(139,190): error C2065: NOP: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.c(10,2): warning C4013: memset: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(40,14): warning C4013: readByte: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(60,17): warning C4013: getImmAddr: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(63,17): warning C4013: getZpAddr: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(66,17): warning C4013: getZpXAddr: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(69,17): warning C4013: getAbsAddr: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(72,17): warning C4013: getAbsXAddr: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(75,17): warning C4013: getAbsYAddr: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(78,17): warning C4013: getIndXAddr: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(81,17): warning C4013: getIndYAddr: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(128,8): warning C4013: getRelAddr: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(353,17): warning C4013: getZpYAddr: нет определения; предполагается "extern" с возвратом типа "int"
+E:\Emulation\Atari2600\6502.c(612,43): warning C4333: >>: слишком большое смещение вправо; потеря данных
+E:\Emulation\Atari2600\6502.c(617,34): warning C4333: >>: слишком большое смещение вправо; потеря данных
+E:\Emulation\Atari2600\6502.c(798,17): warning C4047: функция: "BYTE" отличается по уровням косвенного обращения от "int *"
+E:\Emulation\Atari2600\6502.c(798,16): warning C4024: stackPushByte: различные типы для формального и фактического параметров 1
+E:\Emulation\Atari2600\6502.c(796,1): warning C4133: инициализация: несовместимые типы - из "StateReg *" в "int *"
+E:\Emulation\Atari2600\6502.c(811,1): warning C4133: инициализация: несовместимые типы - из "BYTE *" в "StateReg *"
+  main.c
+E:\Emulation\Atari2600\6502.h(133,154): error C2065: TXA: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.h(134,149): error C2065: TYA: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.h(134,202): error C2065: TXS: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.h(135,163): error C2065: TAY: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.h(135,215): error C2065: TAX: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.h(136,190): error C2065: TSX: необъявленный идентификатор
+E:\Emulation\Atari2600\6502.h(139,190): error C2065: NOP: необъявленный идентификатор
+  memory.c
+E:\Emulation\Atari2600\memory.c(14,19): warning C4101: c: неиспользованная локальная переменная
+  tia.c
+E:\Emulation\Atari2600\tia.c(39,23): warning C4013: readByte: нет определения; предполагается "extern" с возвратом типа "int"
+  Создание кода...

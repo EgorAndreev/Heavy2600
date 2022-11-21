@@ -13,7 +13,7 @@
 #define HIGH(x) ((x >> 8) & 0xFF)
 extern BYTE internalMemory[MEM_MASK];
 void initMemory(char* romPath);
-BYTE readByte(WORD addr);
+//BYTE readByte(WORD addr);
 void writeByte(WORD addr, BYTE data);
 WORD readWord(WORD addr);
 bool isPageCrossed(WORD newAddr, WORD oldAddr);
