@@ -22,11 +22,6 @@ void initMemory(char* romPath)
 
 }
 
-BYTE readByte(WORD addr)
-{
-    return internalMemory[addr & MEM_MASK];
-}
-
 void writeByte(WORD addr, BYTE data)
 {
     internalMemory[addr & MEM_MASK] = data;

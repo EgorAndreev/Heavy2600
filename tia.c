@@ -36,8 +36,8 @@ void tiaStep(bool* wsynced)
         return;
     }
     //COLUBK changed
-    if (rawBgColor != readByte(0x9) && *wsynced != true) {
-        rawBgColor = readByte(0x9);
+    if (rawBgColor != internalMemory[0x9] && *wsynced != true) {
+        rawBgColor = internalMemory[0x9];
         int t = rawBgColor / 16;
         int o = rawBgColor % 16;
         RGB_color rgb = NTSCPalette[t][(o/2)];

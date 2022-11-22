@@ -3,25 +3,7 @@
 #include <time.h>
 #ifndef __6502__
 #define __6502__
-//6502 processor
-// -----------------------------------------------------------------
-//6502 registers
-// ----------------
-//A Ч аккумул€тор, 8 бит;
-//X, Y Ч индексные регистры, 8 бит;
-//PC Ч счетчик команд, 16 бит;
-//S Ч указатель стека, 8 бит;
-//P Ч регистр состо€ни€;
-	//C(P0) Ч перенос;
-	//Z(P1) Ч ноль;
-	//I(P2) Ч запрет внешних прерываний Ч IRQ(I = 0 Ч прерывани€ разрешены);
-	//D(P3) Ч режим BCD дл€ инструкций сложени€ и вычитани€ с переносом;
-	//B(P4) Ч обработка прерывани€(B = 1 после выполнени€ команды BRK);
-	//1 (P5)Ч не используетс€, равен 1;
-	//V(P6) Ч переполнение;
-	//N(P7) Ч знак.–авен старшему биту значени€, загруженного в A, X или Y в результате выполнени€ операции(кроме TXS).
-typedef union {
-	struct {
+typedef struct {
 		bool C : 1;
 		bool Z : 1;
 		bool I : 1;
@@ -30,7 +12,6 @@ typedef union {
 		bool NONE : 1;
 		bool V : 1;
 		bool N : 1;
-	};
 } StateReg;
 typedef struct {
 	BYTE A;
@@ -38,65 +19,71 @@ typedef struct {
 	WORD PC;
 	StateReg P;
 	BYTE X; BYTE Y;
-
 } Registers;
 static Registers registers = { 0,0,0,0,0,0 };
 //ѕроцессор остановлен
 static bool wsynced = false;
 bool* getWsyncState();
-static void ADC(WORD data);
-static void AND(WORD data);
-static void ASL(WORD addr);
-static void ASLACC();
-static void BCC(WORD addr);
-static void BCS(WORD addr);
-static void BEQ(WORD addr);
-static void BIT(WORD data);
-static void BMI(WORD addr);
-static void BNE(WORD addr);
-static void BPL(WORD addr);
-static void BRK();
-static void BVC(WORD addr);
-static void BVS(WORD addr);
-static void CLC();
-static void CLD();
-static void CLI();
-static void CLV();
-static void CMP(WORD data);
-static void CPX(WORD data);
-static void CPY(WORD data);
-static void DEC(WORD addr);
-static void DEX();
-static void DEY();
-static void EOR(WORD data);
-static void INC(WORD addr);
-static void INX();
-static void INY();
-static void JMP(WORD addr);
-static void JSR(WORD addr);
-static void LDA(WORD data);
-static void LDX(WORD data);
-static void LDY(WORD data);
-static void LSRACC();
-static void LSR(WORD addr);
-static void ORA(WORD data);
-static void PHA();
-static void PHP();
-static void PLA();
-static void PLP();
-static void ROLACC();
-static void ROL(WORD addr);
-static void RORACC();
-static void ROR(WORD addr);
-static void RTI();
-static void RTS();
-static void SBC(WORD data);
-static void SEC();
-static void SED();
-static void SEI();
-static void STA(WORD addr);
-static void STX(WORD addr);
-static void STY(WORD addr);
+void ADC(WORD data);
+void AND(WORD data);
+void ASL(WORD addr);
+void ASLACC();
+void BCC(WORD addr);
+void BCS(WORD addr);
+void BEQ(WORD addr);
+void BIT(WORD data);
+void BMI(WORD addr);
+void BNE(WORD addr);
+void BPL(WORD addr);
+void BRK();
+void BVC(WORD addr);
+void BVS(WORD addr);
+void CLC();
+void CLD();
+void CLI();
+void CLV();
+void CMP(WORD data);
+void CPX(WORD data);
+void CPY(WORD data);
+void DEC(WORD addr);
+void DEX();
+void DEY();
+void EOR(WORD data);
+void INC(WORD addr);
+void INX();
+void INY();
+void JMP(WORD addr);
+void JSR(WORD addr);
+void LDA(WORD data);
+void LDX(WORD data);
+void LDY(WORD data);
+void LSRACC();
+void LSR(WORD addr);
+void ORA(WORD data);
+void PHA();
+void PHP();
+void PLA();
+void PLP();
+void ROLACC();
+void ROL(WORD addr);
+void RORACC();
+void ROR(WORD addr);
+void RTI();
+void RTS();
+void SBC(WORD data);
+void SEC();
+void SED();
+void SEI();
+void STA(WORD addr);
+void STX(WORD addr);
+void STY(WORD addr);
+void TAX();
+void TAY();
+void TSX();
+void TXA();
+void TXS();
+void TYA();
+void NOP();
 #endif 
 
 //ќпкоды
@@ -115,11 +102,12 @@ typedef enum enumAddrMode {
 	RelAddr,
 	AccAddr
 } AddrMode;
+typedef void(*opcHandler)(WORD);
 typedef struct structOpCode {
-	void* handler;
+	opcHandler handler;
 	BYTE cycles;
 	AddrMode addressing;
-	bool PageCrossCycles;
+	bool isCrossCycles;
 }OpCode;
 static OpCode allOpcodes[16][16] = {
 	{{&BRK, 7, ImplAddr, false}, {&ORA, 6, IndXAddr, false}, {0}, {0}, {0}, {&ORA, 3, ZpAddr, false}, {&ASL, 5, ZpAddr, false}, {0}, {&PHP, 3, ImplAddr, false}, {&ORA, 2, ImmAddr, false}, {&ASLACC, 2, AccAddr, false}, {0}, {0}, {&ORA, 4, AbsAddr, false}, {&ASL, 6, AbsAddr, false}, {0}},
@@ -146,6 +134,18 @@ static void stackPushWord(WORD data);
 static BYTE stackPopByte();
 static WORD stackPopWord();
 //----------------------
+static WORD getImmAddr();
+static WORD getZpAddr();
+static WORD getZpXAddr();
+static WORD getZpYAddr();
+static WORD getAbsXAddr();
+static WORD getAbsYAddr();
+static WORD getIndAddr();
+static WORD getIndXAddr();
+static WORD getIndYAddr();
+static WORD getRelAddr();
+
+//----------------------
 void cpuReset(void);
-void cpuStep(void);
+int cpuStep(void);
 void updateNZ(BYTE data);

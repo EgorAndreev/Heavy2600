@@ -37,7 +37,7 @@ void stackPushWord(WORD data)
 BYTE stackPopByte()
 {
 	registers.S += 1;
-	BYTE data = readByte(0x0100 | (WORD)registers.S);
+	BYTE data = internalMemory[0x0100 | (WORD)registers.S];
 	printf("Stack now: %#04x\n", registers.S);
 	return data;
 }
@@ -48,530 +48,125 @@ WORD stackPopWord()
 	return (WORD)((hi << 8) | lo);
 }
 
-void cpuStep(void)
+WORD getImmAddr()
 {
-	static x = 0;
-	x++;
-	BYTE opCode = readByte(registers.PC);
-	WORD opndaddr;
-	switch (opCode) {
-		//ADC
-	case 0x69:
-		ADC(readByte(getImmAddr()));
-		break;
-	case 0x65:
-		ADC(readByte(getZpAddr()));
-		break;
-	case 0x75:
-		ADC(readByte(getZpXAddr()));
-		break;
-	case 0x6D:
-		ADC(readByte(getAbsAddr()));
-		break;
-	case 0x7D:
-		ADC(readByte(getAbsXAddr()));
-		break;
-	case 0x79:
-		ADC(readByte(getAbsYAddr()));
-		break;
-	case 0x61:
-		ADC(readByte(getIndXAddr()));
-		break;
-	case 0x71:
-		ADC(readByte(getIndYAddr()));
-		break;
+	registers.PC += 2;
+	return registers.PC - 1;
+}
 
-		//AND
-	case 0x29:
-		AND(readByte(getImmAddr()));
-		break;
-	case 0x25:
-		AND(readByte(getZpAddr()));
-		break;
-	case 0x35:
-		AND(readByte(getZpXAddr()));
-		break;
-	case 0x2D:
-		AND(readByte(getAbsAddr()));
-		break;
-	case 0x3D:
-		AND(readByte(getAbsXAddr()));
-		break;
-	case 0x39:
-		AND(readByte(getAbsYAddr()));
-		break;
-	case 0x21:
-		AND(readByte(getIndXAddr()));
-		break;
-	case 0x31:
-		AND(readByte(getIndYAddr()));
-		break;
-		//ASL
-	case 0x0A:
-		ASLACC();
-		registers.PC += 1;
-		break;
-	case 0x06:
-		ASL(getZpAddr());
-		break;
-	case 0x16:
-		ASL(getZpXAddr());
-		break;
-	case 0x0E:
-		ASL(getAbsAddr());
-		break;
-	case 0x1E:
-		ASL(getAbsXAddr());
-		break;
-		//BCC
-	case 0x90:
-		BCC(getRelAddr());
-		break;
+WORD getZpAddr()
+{
+	registers.PC += 2;
+	return internalMemory[registers.PC - 1];
+}
 
-		//BCS
-	case 0xB0:
-		BCS(getRelAddr());
-		break;
+WORD getZpXAddr()
+{
+	return getZpAddr() + registers.X;
+}
 
-		//BEQ
-	case 0xF0:
-		BEQ(getRelAddr());
-		break;
+WORD getZpYAddr()
+{
+	return getZpAddr() + registers.Y;
+}
 
-		//BIT
-	case 0x24:
-		BIT(getZpAddr());
-		break;
-	case 0x2C:
-		BIT(getAbsAddr());
-		break;
-		//BMI
-	case 0x30:
-		BMI(getRelAddr());
-		break;
-		//BNE
-	case 0xD0:
-		BNE(getRelAddr());
-		break;
-		//BPL
-	case 0x10:
-		BPL(getRelAddr());
-		break;
-		//BRK
-	case 0x00:
-		BRK();
-		registers.PC += 1;
-		break;
-		//BVC
-	case 0x50:
-		BVC(getRelAddr());
-		break;
-		//BVS
-	case 0x70:
-		BVS(getRelAddr());
-		break;
-		//CLC
-	case 0x18:
-		CLC();
-		registers.PC += 1;
-		break;
-		//CLD
-	case 0xD8:
-		CLD();
-		registers.PC += 1;
-		break;
-		//CLI
-	case 0x58:
-		CLI();
-		registers.PC += 1;
-		break;
-		//CLV
-	case 0xB8:
-		CLV();
-		registers.PC += 1;
-		break;
-		//CMP
-	case 0xc9:
-		CMP(readByte(getImmAddr()));
-		break;
-	case 0xc5:
-		CMP(readByte(getZpAddr()));
-		break;
-	case 0xd5:
-		CMP(readByte(getZpXAddr()));
-		break;
-	case 0xcd:
-		CMP(readByte(getAbsAddr()));
-		break;
-	case 0xdd:
-		CMP(readByte(getAbsXAddr()));
-		break;
-	case 0xd9:
-		CMP(readByte(getAbsYAddr()));
-		break;
-	case 0xc1:
-		CMP(readByte(getIndXAddr()));
-		break;
-	case 0xd1:
-		CMP(readByte(getIndYAddr()));
-		break;
-		//CPX
-	case 0xe0:
-		CPX(readByte(getImmAddr()));
-		break;
-	case 0xe4:
-		CPX(readByte(getZpAddr()));
-		break;
-	case 0xec:
-		CPX(readByte(getAbsAddr()));
-		break;
-		//CPY
-	case 0xc0:
-		CPY(readByte(getImmAddr()));
-		break;
-	case 0xc4:
-		CPY(readByte(getZpAddr()));
-		break;
-	case 0xcc:
-		CPY(readByte(getAbsAddr()));
-		break;
-		//DEC
-	case 0xc6:
-		DEC(getZpAddr());
-		break;
-	case 0xd6:
-		DEC(getZpXAddr());
-		break;
-	case 0xce:
-		DEC(getAbsAddr());
-		break;
-	case 0xde:
-		DEC(getAbsXAddr());
-		break;
-		//DEX
-	case 0xca:
-		DEX();
-		registers.PC += 1;
-		break;
-		//DEY
-	case 0x88:
-		DEY();
-		registers.PC += 1;
-		break;
-		//EOR
-	case 0x49:
-		EOR(readByte(getImmAddr()));
-		break;
-	case 0x45:
-		EOR(readByte(getZpAddr()));
-		break;
-	case 0x55:
-		EOR(readByte(getZpXAddr()));
-		break;
-	case 0x4d:
-		EOR(readByte(getAbsAddr()));
-		break;
-	case 0x5d:
-		EOR(readByte(getAbsXAddr()));
-		break;
-	case 0x59:
-		EOR(readByte(getAbsYAddr()));
-		break;
-	case 0x41:
-		EOR(readByte(getIndXAddr()));
-		break;
-	case 0x51:
-		EOR(readByte(getIndYAddr()));
-		break;
-		//INC
-	case 0xe6:
-		INC(getZpAddr());
-		break;
-	case 0xf6:
-		INC(getZpXAddr());
-		break;
-	case 0xee:
-		INC(getAbsAddr());
-		break;
-	case 0xfe:
-		INC(getAbsXAddr());
-		break;
-		//INX
-	case 0xe8:
-		INX();
-		registers.PC += 1;
-		break;
-		//INY
-	case 0xc8:
-		INY();
-		registers.PC += 1;
-		break;
-		//JMP
-	case 0x4c:
-		JMP(getAbsAddr());
-		break;
-	case 0x6c:
-		JMP(getAbsAddr()); // INDERECT, BUT WHY????
-		break;
-		//JSR
-	case 0x20:
-		JSR(getAbsAddr());
-		break;
-		//LDA
-	case 0xa9:
-		LDA(readByte(getImmAddr()));
-		break;
-	case 0xa5:
-		LDA(readByte(getZpAddr()));
-		break;
-	case 0xb5:
-		LDA(readByte(getZpXAddr()));
-		break;
-	case 0xad:
-		LDA(readByte(getAbsAddr()));
-		break;
-	case 0xBD:
-		LDA(readByte(getAbsXAddr()));
-		break;
-	case 0xB9:
-		LDA(readByte(getAbsYAddr()));
-		break;
-	case 0xA1:
-		LDA(readByte(getIndXAddr()));
-		break;
-	case 0xB1:
-		LDA(readByte(getIndYAddr()));
-		break;
-		//LDX
-	case 0xa2:
-		LDX(readByte(getImmAddr()));
-		break;
-	case 0xa6:
-		LDX(readByte(getZpAddr()));
-		break;
-	case 0xb6:
-		LDX(readByte(getZpYAddr()));
-		break;
-	case 0xae:
-		LDX(readByte(getAbsAddr()));
-		break;
-	case 0xbe:
-		LDX(readByte(getAbsYAddr()));
-		break;
-		//LDY
-	case 0xa0:
-		LDY(readByte(getImmAddr()));
-		break;
-	case 0xa4:
-		LDY(readByte(getZpAddr()));
-		break;
-	case 0xb4:
-		LDY(readByte(getZpXAddr()));
-		break;
-	case 0xac:
-		LDY(readByte(getAbsAddr()));
-		break;
-	case 0xbc:
-		LDY(readByte(getAbsXAddr()));
-		break;
-		//LSR
-	case 0x4A:
-		LSRACC();
-		registers.PC += 1;
-		break;
-	case 0x46:
-		LSR(getZpAddr());
-		break;
-	case 0x56:
-		LSR(getZpXAddr());
-		break;
-	case 0x4E:
-		LSR(getAbsAddr());
-		break;
-	case 0x5E:
-		LSR(getAbsXAddr());
-		break;
-		//NOP
-	case 0xea:
-		registers.PC += 1;
-		break;
-		//ORA
-	case 0x09:
-		ORA(getImmAddr());
-		break;
-	case 0x05:
-		ORA(getZpAddr());
-		break;
-	case 0x15:
-		ORA(getZpXAddr());
-		break;
-	case 0x0D:
-		ORA(getAbsAddr());
-		break;
-	case 0x1D:
-		ORA(getAbsXAddr());
-		break;
-	case 0x19:
-		ORA(getAbsYAddr());
-		break;
-	case 0x01:
-		ORA(getIndXAddr());
-		break;
-	case 0x11:
-		ORA(getIndYAddr());
-		break;
-		//PHA
-	case 0x48:
-		PHA();
-		registers.PC += 1;
-		break;
-		//PHP
-	case 0x08:
-		PHP();
-		registers.PC += 1;
-		break;
-		//PLA
-	case 0x68:
-		PLA();
-		registers.PC += 1;
-		break;
-		//PLP
-	case 0x28:
-		PLP();
-		registers.PC += 1;
-		break;
-		//ROL
-	case 0x2a:
-		ROLACC();
-		registers.PC += 1;
-		break;
-	case 0x26:
-		ROL(getZpAddr());
-		break;
-	case 0x36:
-		ROL(getZpXAddr());
-		break;
-	case 0x2e:
-		ROL(getAbsAddr());
-		break;
-	case 0x3e:
-		ROL(getAbsXAddr());
-		break;
-		//ROR
-	case 0x6a:
-		RORACC();
-		registers.PC += 1;
-		break;
-	case 0x66:
-		ROR(getZpAddr());
-		break;
-	case 0x76:
-		ROR(getZpXAddr());
-		break;
-	case 0x6e:
-		ROR(getAbsAddr());
-		break;
-	case 0x7e:
-		ROR(getAbsXAddr());
-		break;
-		//RTI
-	case 0x40:
-		RTI();
-		registers.PC += 1;
-		break;
-		//RTS
-	case 0x60:
-		RTS();
-		registers.PC += 1;
-		break;
-		//SBC
-	case 0xe9:
-		SBC(readByte(getImmAddr()));
-		break;
-	case 0xe5:
-		SBC(readByte(getZpAddr()));
-		break;
-	case 0xf5:
-		SBC(readByte(getZpXAddr()));
-		break;
-	case 0xed:
-		SBC(readByte(getAbsAddr()));
-		break;
-	case 0xfd:
-		SBC(readByte(getAbsXAddr()));
-		break;
-	case 0xf9:
-		SBC(readByte(getAbsYAddr()));
-		break;
-	case 0xe1:
-		SBC(readByte(getIndXAddr()));
-		break;
-	case 0xf1:
-		SBC(readByte(getIndYAddr()));
-		break;
-		//SEC
-	case 0x38:
-		SEC();
-		registers.PC += 1;
-		break;
-		//SED
-	case 0xf8:
-		SED();
-		registers.PC += 1;
-		break;
-		//SEI
-	case 0x78:
-		SEI();
-		registers.PC += 1;
-		break;
-		//STA
-	case 0x85:
-		STA(getZpAddr());
-		break;
-	case 0x95:
-		STA(getZpXAddr());
-		break;
-	case 0x8D:
-		STA(getAbsAddr());
-		break;
-	case 0x9D:
-		STA(getAbsXAddr());
-		break;
-	case 0x99:
-		STA(getAbsYAddr());
-		break;
-	case 0x81:
-		STA(getIndXAddr());
-		break;
-	case 0x91:
-		STA(getIndYAddr());
-		break;
-		//STX
-	case 0x86:
-		STX(getZpAddr());
-		break;
-	case 0x96:
-		STX(getZpYAddr());
-		break;
-	case 0x8e:
-		STX(getAbsAddr());
-		break;
-		//STY
-	case 0x84:
-		STY(getZpAddr());
-		break;
-	case 0x94:
-		STY(getZpXAddr());
-		break;
-	case 0x8c:
-		STY(getAbsAddr());
-		break;
-		//TODO: TAY, TAX and OTHER TXX
+WORD getAbsAddr()
+{
+	registers.PC += 3;
+	return readWord(registers.PC - 2);
+}
+WORD getAbsXAddr()
+{
+	return getAbsAddr() + registers.X;
+}
+WORD getAbsYAddr()
+{
+	return getAbsAddr() + registers.Y;
+}
 
-	default:
-		printf("Unknown instruction: %#02x\n", opCode);
+WORD getIndAddr()
+{
+	registers.PC += 3;
+	return readWord(registers.PC - 2);
+}
+
+WORD getIndXAddr()
+{
+	registers.PC += 2;
+	return readWord(internalMemory[registers.PC - 1] + registers.X);
+}
+
+WORD getIndYAddr()
+{
+	registers.PC += 2;
+	return readWord(readWord(internalMemory[registers.PC - 1]) + registers.Y);
+}
+
+WORD getRelAddr()
+{
+	registers.PC += 2;
+	return registers.PC + internalMemory[registers.PC - 1];
+}
+
+int cpuStep(void)
+{
+	BYTE cycles = 0;
+	BYTE opCode = internalMemory[registers.PC & MEM_MASK];
+	BYTE H = (int)(opCode / 10);
+	BYTE L = opCode % 10;
+	OpCode o = allOpcodes[L][H];
+	WORD oldPc = registers.PC;
+	WORD addr = 0;
+	switch (o.addressing) {
+	case ImplAddr:
+		registers.PC += 1;
+		break;
+	case ImmAddr:
+		addr = getImmAddr();
+		break;
+	case ZpAddr:
+		addr = getZpAddr();
+		break;
+	case ZpXAddr:
+		addr = getZpXAddr();
+		break;
+	case ZpYAddr:
+		addr = getZpYAddr();
+		break;
+	case AbsAddr:
+		addr = getAbsAddr();
+		break;
+	case AbsXAddr:
+		addr = getAbsXAddr();
+		break;
+	case AbsYAddr:
+		addr = getAbsYAddr();
+		break;
+	case IndAddr:
+		addr = getIndAddr();
+		break;
+	case IndXAddr:
+		addr = getIndXAddr();
+		break;
+	case IndYAddr:
+		addr = getIndYAddr();
+		break;
+	case RelAddr:
+		addr = getRelAddr();
+		break;
 	}
-
+	o.handler(addr);
+	if (o.isCrossCycles == true) {
+		if (o.addressing == RelAddr) {
+			if (isPageCrossed(registers.PC, oldPc)) {
+				cycles += o.cycles + 1;
+			}
+			else { cycles += o.cycles + 2; }
+		}
+		if (isPageCrossed(addr, oldPc)) { cycles += o.cycles + 1; }
+	}
+	else { cycles += o.cycles; }
+	return cycles;
 }
 
 void updateNZ(BYTE data)
@@ -783,6 +378,7 @@ void LSR(WORD addr)
 	registers.P.C = registers.A & 0x01; //Carry
 }
 
+
 void ORA(WORD addr)
 {
 	registers.A = registers.A & internalMemory[addr];
@@ -887,6 +483,28 @@ void STX(WORD addr)
 void STY(WORD addr)
 {
 	internalMemory[addr] = registers.Y;
+}
+void TAX()
+{
+}
+void TAY()
+{
+}
+void TSX()
+{
+}
+void TXA()
+{
+}
+void TXS()
+{
+}
+void TYA()
+{
+}
+void NOP()
+{
+	//nop, just nop
 }
 void JMP(WORD addr)
 {
