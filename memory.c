@@ -34,6 +34,11 @@ WORD readWord(WORD addr)
     return (hi << 8) | lo;
 }
 
+BYTE readByte(WORD addr)
+{
+    return internalMemory[addr & MEM_MASK];
+}
+
 bool isPageCrossed(WORD newAddr, WORD oldAddr)
 {
     if(HIGH(newAddr) > HIGH(oldAddr)) {

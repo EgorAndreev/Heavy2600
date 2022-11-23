@@ -3,6 +3,7 @@
 #include <time.h>
 #ifndef __6502__
 #define __6502__
+extern void logReg();
 typedef struct {
 		bool C : 1;
 		bool Z : 1;
@@ -120,7 +121,7 @@ static OpCode allOpcodes[16][16] = {
 	{{&BVS, 2, RelAddr, true},{&ADC,5, IndYAddr, true},{0},{0},{0},{&ADC, 4, ZpXAddr, false},{&ROR, 6,ZpXAddr, false},{0},{&SEI,2,ImplAddr, false},{&ADC,4,AbsYAddr, true},{0},{0},{0},{&ADC, 4, AbsXAddr, true},{&ROR, 7, AbsXAddr, false},{0}},
 	{{0},{&STA, 6, IndXAddr, false},{0},{0},{&STY, 3, ZpAddr, false},{&STA, 3, ZpAddr, false},{&STX, 3,ZpAddr, false},{0},{&DEY, 2,ImplAddr,false},{0},{&TXA, 2, ImplAddr, false},{0},{&STY, 4,AbsAddr, false},{&STA, 4,AbsAddr,false},{&STX, 4,AbsAddr, false},{0}},
 	{{&BCC,2, RelAddr, true},{&STA, 6, IndYAddr, false},{0},{0},{&STY, 4, ZpXAddr, false},{&STA, 4, ZpXAddr, false},{&STX, 4, ZpYAddr, false},{0},{&TYA, 2, ImplAddr, false},{&STA, 5,AbsYAddr, false},{&TXS, 2,ImplAddr, false},{0},{0},{&STA, 5, AbsXAddr, false},{0},{0}},
-	{{&LDY, 2,ImmAddr, false},{&LDA, 6, IndXAddr,false},{&LDX, 3,ZpAddr, false},{0},{&LDY, 3,ZpAddr, false},{&LDA, 3,ZpAddr, false},{&LDX, 3,ZpAddr, false},{0},{&TAY, 2,ImplAddr, false},{&LDA, 2, ImmAddr, false},{&TAX, 2,ImplAddr, false},{0},{&LDY, 4, AbsAddr, false},{&LDA, 4,AbsAddr, false},{&LDX,4,AbsAddr, false},{0}},
+	{{&LDY, 2,ImmAddr, false},{&LDA, 6, IndXAddr,false},{&LDX, 3,ImmAddr, false},{0},{&LDY, 3,ZpAddr, false},{&LDA, 3,ZpAddr, false},{&LDX, 3,ZpAddr, false},{0},{&TAY, 2,ImplAddr, false},{&LDA, 2, ImmAddr, false},{&TAX, 2,ImplAddr, false},{0},{&LDY, 4, AbsAddr, false},{&LDA, 4,AbsAddr, false},{&LDX,4,AbsAddr, false},{0}},
 	{{&BCS, 2,RelAddr, true},{&LDA, 5,IndYAddr,true},{0},{0},{&LDY,4,ZpXAddr, false},{&LDA, 4,ZpXAddr, false},{&LDX, 4,ZpYAddr,false},{0},{&CLV, 2,ImplAddr, false},{&LDA,5,AbsYAddr,true},{&TSX, 2,ImplAddr, false},{0},{&LDY, 4,AbsXAddr, true},{&LDA, 4,AbsXAddr, true},{&LDX, 4,AbsYAddr, true},{0}},
 	{{&CPY, 2,ImmAddr, false},{&CMP, 6,IndXAddr, false},{0},{0},{&CPY,3,ZpAddr, false},{&CMP,3,ZpAddr,false},{&DEC, 5,ZpAddr, false},{0},{&INY, 2,ImplAddr, false},{&CMP, 2,ImmAddr, false},{&DEX, 2,ImplAddr, false},{0},{&CPY, 4,AbsAddr, false},{&CMP, 4, AbsAddr, false},{&DEC,6,AbsAddr,false},{0}},
 	{{&BNE, 2,RelAddr, true},{&CMP, 5, IndYAddr, true},{0},{0},{0},{&CMP, 4, ZpXAddr, false},{&DEC, 6,ZpXAddr, false},{0},{&CLD, 2,ImplAddr, false},{&CMP, 4,AbsYAddr, true},{0},{0},{0},{&CMP, 4,AbsXAddr, true},{&DEC, 7,AbsXAddr,false}, {0}},
@@ -144,7 +145,7 @@ static WORD getIndAddr();
 static WORD getIndXAddr();
 static WORD getIndYAddr();
 static WORD getRelAddr();
-
+//----------------------
 //----------------------
 void cpuReset(void);
 int cpuStep(void);

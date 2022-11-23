@@ -15,5 +15,6 @@ extern BYTE internalMemory[MEM_MASK];
 void initMemory(char* romPath);
 void writeByte(WORD addr, BYTE data);
 WORD readWord(WORD addr);
+BYTE readByte(WORD addr);
 bool isPageCrossed(WORD newAddr, WORD oldAddr);
 #endif

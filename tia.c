@@ -1,6 +1,6 @@
 #include "tia.h"
 #include "palette.h"
-
+#include "6502.h"
 void initGraph() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -65,7 +65,7 @@ void tiaStep(bool* wsynced)
         SDL_RenderDrawPoint(ren, step - 1, scanline);
         SDL_RenderDrawPoint(ren, step, scanline);
     }
-    SDL_RenderPresent(ren);
+
     SDL_Event event;
     if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
         return;

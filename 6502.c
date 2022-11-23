@@ -2,6 +2,16 @@
 #include "memory.h"
 #include <stdio.h>
 #include "bitUtils.h"
+void logReg()
+{
+	printf("Stack now at: %#04x\n", registers.S);
+	printf("X now: %#04x\n", registers.X);
+	printf("Y now: %#04x\n", registers.Y);
+	printf("A now: %#04x\n", registers.A);
+	printf("PC now at: %#04x\n", registers.PC);
+
+
+}
 bool* getWsyncState() {
 	return &(wsynced);
 }
@@ -37,7 +47,7 @@ void stackPushWord(WORD data)
 BYTE stackPopByte()
 {
 	registers.S += 1;
-	BYTE data = internalMemory[0x0100 | (WORD)registers.S];
+	BYTE data = readByte(0x0100 | (WORD)registers.S);
 	printf("Stack now: %#04x\n", registers.S);
 	return data;
 }
@@ -57,7 +67,7 @@ WORD getImmAddr()
 WORD getZpAddr()
 {
 	registers.PC += 2;
-	return internalMemory[registers.PC - 1];
+	return readByte(registers.PC - 1);
 }
 
 WORD getZpXAddr()
@@ -93,28 +103,28 @@ WORD getIndAddr()
 WORD getIndXAddr()
 {
 	registers.PC += 2;
-	return readWord(internalMemory[registers.PC - 1] + registers.X);
+	return readWord(readByte(registers.PC - 1) + registers.X);
 }
 
 WORD getIndYAddr()
 {
 	registers.PC += 2;
-	return readWord(readWord(internalMemory[registers.PC - 1]) + registers.Y);
+	return readWord(readWord(readByte(registers.PC - 1)) + registers.Y);
 }
 
 WORD getRelAddr()
 {
 	registers.PC += 2;
-	return registers.PC + internalMemory[registers.PC - 1];
+	return registers.PC + (SIGNED_BYTE)readByte(registers.PC - 1);
 }
 
 int cpuStep(void)
 {
 	BYTE cycles = 0;
-	BYTE opCode = internalMemory[registers.PC & MEM_MASK];
-	BYTE H = (int)(opCode / 10);
-	BYTE L = opCode % 10;
-	OpCode o = allOpcodes[L][H];
+	BYTE opCode = readByte(registers.PC);
+	BYTE H = (opCode >> 1 * 4) & 0x0F;
+	BYTE L = (opCode >> 0 * 4) & 0x0F;
+	OpCode o = allOpcodes[H][L];
 	WORD oldPc = registers.PC;
 	WORD addr = 0;
 	switch (o.addressing) {
@@ -155,6 +165,7 @@ int cpuStep(void)
 		addr = getRelAddr();
 		break;
 	}
+	
 	o.handler(addr);
 	if (o.isCrossCycles == true) {
 		if (o.addressing == RelAddr) {
@@ -167,6 +178,8 @@ int cpuStep(void)
 	}
 	else { cycles += o.cycles; }
 	return cycles;
+
+
 }
 
 void updateNZ(BYTE data)
@@ -180,9 +193,9 @@ void updateNZ(BYTE data)
 
 void ADC(WORD addr)
 {
-	BYTE sum = registers.A + internalMemory[addr] + registers.P.C;
+	BYTE sum = registers.A + readByte(addr) + registers.P.C;
 	if (registers.P.D) { //BCD
-		if (((registers.A ^ internalMemory[addr] ^ sum) & 0x10) == 0x10)
+		if (((registers.A ^ readByte(addr) ^ sum) & 0x10) == 0x10)
 		{
 			sum += 0x06;
 		}
@@ -192,14 +205,14 @@ void ADC(WORD addr)
 		}
 	}
 	registers.P.C = sum & 0x01; //Carry
-	registers.P.V = ~(registers.A ^ internalMemory[addr]) & (registers.A ^ sum) & 0x80; //Overflow
+	registers.P.V = ~(registers.A ^ readByte(addr)) & (registers.A ^ sum) & 0x80; //Overflow
 	registers.A = sum;
 	updateNZ(sum);
 }
 
 void AND(WORD addr)
 {
-	registers.A &= internalMemory[addr];
+	registers.A &= readByte(addr);
 	updateNZ(registers.A);
 }
 
@@ -288,21 +301,21 @@ void CLV()
 void CMP(WORD addr)
 {
 	BYTE res;
-	res = registers.A - internalMemory[addr];
+	res = registers.A - readByte(addr);
 	registers.P.C = res & 0x01; //Carry
 	updateNZ(res);
 }
 void CPX(WORD addr)
 {
 	BYTE res;
-	res = registers.X - internalMemory[addr];
+	res = registers.X - readByte(addr);
 	registers.P.C = res & 0x01; //Carry
 	updateNZ(res);
 }
 void CPY(WORD addr)
 {
 	BYTE res;
-	res = registers.Y - internalMemory[addr];
+	res = registers.Y - readByte(addr);
 	registers.P.C = res & 0x01; //Carry
 	updateNZ(res);
 }
@@ -323,7 +336,7 @@ void DEY()
 }
 void EOR(WORD addr)
 {
-	registers.A = !registers.A != !internalMemory[addr];//XOR
+	registers.A = !registers.A != !readByte(addr);//XOR
 	updateNZ(registers.A);
 }
 void INC(WORD addr)
@@ -342,7 +355,7 @@ void INY()
 }
 
 void LDA(WORD addr) {
-	registers.A = internalMemory[addr];
+	registers.A = readByte(addr);
 	updateNZ(registers.A);
 }
 void STA(WORD addr) {
@@ -354,13 +367,13 @@ void STA(WORD addr) {
 
 void LDX(WORD addr)
 {
-	registers.X = internalMemory[addr];
+	registers.X = readByte(addr);
 	updateNZ(registers.X);
 }
 
 void LDY(WORD addr)
 {
-	registers.Y = internalMemory[addr];
+	registers.Y = readByte(addr);
 	updateNZ(registers.X);
 }
 
