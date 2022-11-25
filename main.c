@@ -7,11 +7,12 @@
 #include "windows.h"
 
 int main(int argc, char* argv[]) {
-	initMemory("kernel_11.bin");
+	initMemory("kernel_13.bin");
 	cpuReset();
 	initGraph();
 	while (true) {
 		int c = cpuStep();
+		
 		for (int i = 0; i < c; i++) {
 			tiaStep(getWsyncState());
 		}

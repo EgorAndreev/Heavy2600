@@ -2,6 +2,7 @@
 #include "memory.h"
 #include <stdio.h>
 #include "bitUtils.h"
+#include "tia.h"
 void logReg()
 {
 	printf("Stack now at: %#04x\n", registers.S);
@@ -165,16 +166,16 @@ int cpuStep(void)
 		addr = getRelAddr();
 		break;
 	}
-	
 	o.handler(addr);
 	if (o.isCrossCycles == true) {
 		if (o.addressing == RelAddr) {
 			if (isPageCrossed(registers.PC, oldPc)) {
-				cycles += o.cycles + 1;
+				cycles += o.cycles + 2;
 			}
-			else { cycles += o.cycles + 2; }
+			else { cycles += o.cycles + 1; }
 		}
-		if (isPageCrossed(addr, oldPc)) { cycles += o.cycles + 1; }
+		else if (isPageCrossed(addr, oldPc)) { cycles += o.cycles + 1; }
+		else { cycles += o.cycles; }
 	}
 	else { cycles += o.cycles; }
 	return cycles;
@@ -350,6 +351,7 @@ void INX() {
 }
 void INY()
 {
+	//logPos();
 	registers.Y += 1;
 	updateNZ(registers.Y);
 }

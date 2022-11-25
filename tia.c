@@ -1,6 +1,11 @@
 #include "tia.h"
 #include "palette.h"
 #include "6502.h"
+void logPos()
+{
+    printf("STEP: %d\t", step);
+    printf("SCANLINE: %d\n", scanline);
+}
 void initGraph() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -35,6 +40,13 @@ void tiaStep(bool* wsynced)
         step = 0;
         return;
     }
+    if (readByte(0) != 0 && vsync == false) { 
+        vsync = true;
+        scanline = step = 0;
+    }
+    if (readByte(0) == 0) {
+        vsync = false;
+    }
     //COLUBK changed
     if (rawBgColor != internalMemory[0x9] && *wsynced != true) {
         rawBgColor = internalMemory[0x9];
@@ -48,6 +60,7 @@ void tiaStep(bool* wsynced)
     if (step >= SCR_WIDTH) {
         step = 0;
         scanline += 1;
+        SDL_RenderPresent(ren);
         return;
     }
     //New frame
@@ -69,7 +82,6 @@ void tiaStep(bool* wsynced)
     SDL_Event event;
     if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
         return;
-    
 }
 
 void close()

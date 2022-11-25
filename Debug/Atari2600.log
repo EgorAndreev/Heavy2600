@@ -1,4 +1,4 @@
-﻿  6502.c
+﻿  tia.c
 E:\Emulation\Atari2600\6502.h(114,1): warning C4113: "void (__cdecl *)()" отличается в списках параметров от "opcHandler"
 E:\Emulation\Atari2600\6502.h(115,1): warning C4113: "void (__cdecl *)()" отличается в списках параметров от "opcHandler"
 E:\Emulation\Atari2600\6502.h(116,1): warning C4113: "void (__cdecl *)()" отличается в списках параметров от "opcHandler"
@@ -15,11 +15,4 @@ E:\Emulation\Atari2600\6502.h(126,1): warning C4113: "void (__cdecl *)()" отл
 E:\Emulation\Atari2600\6502.h(127,1): warning C4113: "void (__cdecl *)()" отличается в списках параметров от "opcHandler"
 E:\Emulation\Atari2600\6502.h(128,1): warning C4113: "void (__cdecl *)()" отличается в списках параметров от "opcHandler"
 E:\Emulation\Atari2600\6502.h(129,1): warning C4113: "void (__cdecl *)()" отличается в списках параметров от "opcHandler"
-E:\Emulation\Atari2600\6502.c(20,2): warning C4013: memset: нет определения; предполагается "extern" с возвратом типа "int"
-E:\Emulation\Atari2600\6502.c(221,43): warning C4333: >>: слишком большое смещение вправо; потеря данных
-E:\Emulation\Atari2600\6502.c(227,34): warning C4333: >>: слишком большое смещение вправо; потеря данных
-E:\Emulation\Atari2600\6502.c(410,17): warning C4047: функция: "BYTE" отличается по уровням косвенного обращения от "int *"
-E:\Emulation\Atari2600\6502.c(410,16): warning C4024: stackPushByte: различные типы для формального и фактического параметров 1
-E:\Emulation\Atari2600\6502.c(408,1): warning C4133: инициализация: несовместимые типы - из "StateReg *" в "int *"
-E:\Emulation\Atari2600\6502.c(423,1): warning C4133: инициализация: несовместимые типы - из "BYTE *" в "StateReg *"
   Atari2600.vcxproj -> E:\Emulation\Atari2600\Debug\Atari2600.exe
